@@ -63,10 +63,12 @@ def login():
         username = request.form['username']
         password = request.form['password']
 
+        hashed_password = hashlib.sha256(password.encode('utf-8')).hexdigest()
+
         # Controleer of gebruiker bestaat in de gebruikerslijst
         users = read_users()
         for user in users:
-            if user['username'] == username and user['password'] == password:
+            if user['username'] == username and user['password'] == hashed_password:
                 session['username'] = username
                 return redirect(url_for('index'))
 
