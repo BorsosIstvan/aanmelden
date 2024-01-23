@@ -9,6 +9,7 @@
 <body>
     {% if username %}
         <h1>Hoi {{ username }}</h1>
+        <h1>Je naam is: {{ naam}} {{surname}}</h1>
         <a href="{{ url_for('logout') }}">Uitloggen</a>
     {% else %}
         <h1>Welkom bij het aanmeld- en inlogsysteem</h1>
