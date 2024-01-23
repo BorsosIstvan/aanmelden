@@ -1,7 +1,8 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, session
 import json
 
 app = Flask(__name__)
+app.secret_key = 'your_secret_key'  # Voeg een geheime sleutel toe voor sessies
 
 @app.route('/')
 def home():
@@ -9,32 +10,34 @@ def home():
 
 @app.route('/signup', methods=['POST'])
 def signup():
-    username = request.form['username']
-    password = request.form['password']
+    # (hetzelfde als voorheen)
 
-    # Load existing user data from JSON file
-    try:
-        with open('users.json', 'r') as file:
-            users = json.load(file)
-    except FileNotFoundError:
-        users = []
+@app.route('/login', methods=['POST'])
+def login():
+    login_username = request.form['login_username']
+    login_password = request.form['login_password']
 
-    # Check if the username is already taken
+    # (hetzelfde als voorheen)
+
+    # Controleer of de gebruikersnaam en het wachtwoord overeenkomen
     for user in users:
-        if user['username'] == username:
-            return 'Username already taken!'
+        if user['username'] == login_username and user['password'] == login_password:
+            # Sla de gebruikersnaam op in de sessie
+            session['username'] = login_username
+            return redirect(url_for('welcome'))
 
-    # Add the new user to the list
-    new_user = {'username': username, 'password': password}
-    users.append(new_user)
+    return 'Invalid login credentials.'
 
-    # Save the updated user data to the JSON file
-    with open('users.json', 'w') as file:
-        json.dump(users, file, indent=2)
+@app.route('/welcome')
+def welcome():
+    # Controleer of de gebruiker is ingelogd
+    if 'username' in session:
+        username = session['username']
+        return render_template('welcome.html', username=username)
+    else:
+        return 'Not logged in.'
 
-    return redirect(url_for('home'))
-
-# ... (rest of the code)
+# ... (rest van de code)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8000)
