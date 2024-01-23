@@ -10,6 +10,7 @@
     {% if username %}
         <h1>Hoi {{ username }}</h1>
         <a href="{{ url_for('logout') }}">Uitloggen</a>
+        <a href="{{ url_for('users') }}">Bekijk gebruikerslijst</a>
     {% else %}
         <h1>Welkom bij het aanmeld- en inlogsysteem</h1>
         <a href="{{ url_for('login') }}">Inloggen</a> |
