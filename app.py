@@ -24,7 +24,9 @@ def write_users(users):
 @app.route('/')
 def index():
     username = session.get('username')
-    return render_template('index.html', username=username)
+    name = session.get('name')
+    surname = session.get('surname')
+    return render_template('index.html', username=username, name=name, surname=surname)
 
 # Aanmeldpagina
 @app.route('/signup', methods=['GET', 'POST'])
