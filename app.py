@@ -16,6 +16,12 @@ dummy_users = [
 with open('users.json', 'w') as file:
     json.dump(dummy_users, file, indent=2)
 
+# Dummylijst met online gebruikers
+online_users = []
+
+# Dummylijst met chatberichten
+chat_messages = []
+
 # Functie voor het hashen van wachtwoorden
 def hash_password(password):
     return hashlib.md5(password.encode()).hexdigest()
@@ -40,6 +46,8 @@ def login():
         # Controleer of de gebruikersnaam en het gehashte wachtwoord overeenkomen
         for user in users:
             if user['username'] == login_username and user['password'] == hash_password(login_password):
+                # Voeg gebruiker toe aan de lijst met online gebruikers
+                online_users.append(login_username)
                 # Sla de gebruikersnaam op in de sessie
                 session['username'] = login_username
                 return redirect(url_for('chat'))
@@ -48,42 +56,23 @@ def login():
 
     return render_template('login.html')
 
-@app.route('/signup', methods=['GET', 'POST'])
-def signup():
-    if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
-
-        # Laad bestaande gebruikersgegevens uit JSON-bestand
-        try:
-            with open('users.json', 'r') as file:
-                users = json.load(file)
-        except FileNotFoundError:
-            users = []
-
-        # Controleer of de gebruikersnaam al in gebruik is
-        for user in users:
-            if user['username'] == username:
-                return 'Username already taken!'
-
-        # Voeg de nieuwe gebruiker toe aan de lijst
-        new_user = {'username': username, 'password': hash_password(password)}
-        users.append(new_user)
-
-        # Sla de bijgewerkte gebruikersgegevens op naar het JSON-bestand
-        with open('users.json', 'w') as file:
-            json.dump(users, file, indent=2)
-
-        return redirect(url_for('home'))
-
-    return render_template('signup.html')
+@app.route('/logout', methods=['POST'])
+def logout():
+    # Controleer of de gebruiker is ingelogd
+    if 'username' in session:
+        username = session['username']
+        # Verwijder de gebruiker uit de lijst met online gebruikers
+        online_users.remove(username)
+        # Wis de sessie
+        session.clear()
+    return redirect(url_for('home'))
 
 @app.route('/chat')
 def chat():
     # Controleer of de gebruiker is ingelogd
     if 'username' in session:
         username = session['username']
-        return render_template('chat.html', username=username)
+        return render_template('chat.html', username=username, users=online_users)
     else:
         return redirect(url_for('login'))
 

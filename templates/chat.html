@@ -15,8 +15,15 @@
 <body>
     <h1>Chatroom</h1>
 
-    <div id="chat-messages">
-        <!-- Hier worden de chatberichten weergegeven -->
+    <p>Ingelogd als: <strong>{{ username }}</strong></p>
+
+    <div id="user-list">
+        <h3>Gebruikers online:</h3>
+        <ul>
+            {% for user in users %}
+                <li>{{ user }}</li>
+            {% endfor %}
+        </ul>
     </div>
 
     <form id="chat-form">
@@ -27,6 +34,15 @@
         <!-- Verzendknop -->
         <input type="button" value="Verzend" onclick="sendMessage()">
     </form>
+
+    <!-- Knop voor uitloggen -->
+    <form action="/logout" method="post">
+        <input type="submit" value="Uitloggen">
+    </form>
+
+    <div id="chat-messages">
+        <!-- Hier worden de chatberichten weergegeven -->
+    </div>
 
     <script>
         // JavaScript voor het verzenden van chatberichten
@@ -39,7 +55,7 @@
                 var chatMessages = document.getElementById('chat-messages');
                 var newMessage = document.createElement('div');
                 newMessage.className = 'chat-message';
-                newMessage.textContent = '<gebruiker>: ' + message;
+                newMessage.textContent = '{{ username }}: ' + message;
                 chatMessages.appendChild(newMessage);
 
                 // Reset het invoerveld
