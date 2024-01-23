@@ -1,3 +1,5 @@
+import hashlib
+
 from flask import Flask, render_template, request, redirect, url_for, session
 import json
 
@@ -34,6 +36,9 @@ def signup():
         email = request.form['email']
         username = request.form['username']
         password = request.form['password']
+        # Hash het wachtwoord voordat het wordt opgeslagen
+        hashed_password = hashlib.sha256(password.encode('utf-8')).hexdigest()
+
 
         # Voeg nieuwe gebruiker toe aan gebruikerslijst
         users = read_users()
@@ -42,7 +47,7 @@ def signup():
             'surname': surname,
             'email': email,
             'username': username,
-            'password': password  # Let op: wachtwoorden moeten worden gehasht voordat ze worden opgeslagen in een echt project
+            'password': hashed_password  # Let op: wachtwoorden moeten worden gehasht voordat ze worden opgeslagen in een echt project
         })
         write_users(users)
 
