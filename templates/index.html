@@ -7,8 +7,13 @@
     <title>Home</title>
 </head>
 <body>
-    <h1>Hoi Anoniem, dit is de geheime klatspagina van ons.</h1>
-    <a href="/login">Login</a><br>
-    <a href="/signup">Aanmelden</a>
+    {% if username %}
+        <h1>Hoi {{ username }}</h1>
+        <a href="{{ url_for('logout') }}">Uitloggen</a>
+    {% else %}
+        <h1>Welkom bij het aanmeld- en inlogsysteem</h1>
+        <a href="{{ url_for('login') }}">Inloggen</a> |
+        <a href="{{ url_for('signup') }}">Aanmelden</a>
+    {% endif %}
 </body>
 </html>

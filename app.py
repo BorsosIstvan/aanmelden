@@ -1,80 +1,77 @@
 from flask import Flask, render_template, request, redirect, url_for, session
 import json
-import hashlib
 
 app = Flask(__name__)
-app.secret_key = 'your_secret_key'  # Voeg een geheime sleutel toe voor sessies
+app.secret_key = 'your_secret_key'  # Verander dit naar een geheime sleutel
 
-# Dummygebruikers om mee te beginnen (let op: wachtwoorden zijn gehasht)
-dummy_users = [
-    {'username': 'admin', 'password': '5f4dcc3b5aa765d61d8327deb882cf99'},  # 'password'
-    {'username': 'user1', 'password': '81dc9bdb52d04dc20036dbd8313ed055'},  # '1234'
-    {'username': 'user2', 'password': '4a8a08f09d37b73795649038408b5f33'}   # 'password123'
-]
+# Functie om gebruikers uit het JSON-bestand te lezen
+def read_users():
+    try:
+        with open('users.json', 'r') as file:
+            users = json.load(file)
+    except FileNotFoundError:
+        users = []
+    return users
 
-# Schrijf de dummygebruikers naar het JSON-bestand
-with open('users.json', 'w') as file:
-    json.dump(dummy_users, file, indent=2)
+# Functie om gebruikers naar het JSON-bestand te schrijven
+def write_users(users):
+    with open('users.json', 'w') as file:
+        json.dump(users, file, indent=2)
 
-# Dummylijst met online gebruikers
-online_users = []
-
-# Dummylijst met chatberichten
-chat_messages = []
-
-# Functie voor het hashen van wachtwoorden
-def hash_password(password):
-    return hashlib.md5(password.encode()).hexdigest()
-
+# Indexpagina
 @app.route('/')
-def home():
-    return render_template('index.html')
+def index():
+    username = session.get('username')
+    return render_template('index.html', username=username)
 
+# Aanmeldpagina
+@app.route('/signup', methods=['GET', 'POST'])
+def signup():
+    if request.method == 'POST':
+        # Verkrijg gebruikersgegevens van het formulier
+        name = request.form['name']
+        surname = request.form['surname']
+        email = request.form['email']
+        username = request.form['username']
+        password = request.form['password']
+
+        # Voeg nieuwe gebruiker toe aan gebruikerslijst
+        users = read_users()
+        users.append({
+            'name': name,
+            'surname': surname,
+            'email': email,
+            'username': username,
+            'password': password  # Let op: wachtwoorden moeten worden gehasht voordat ze worden opgeslagen in een echt project
+        })
+        write_users(users)
+
+        return redirect(url_for('index'))
+
+    return render_template('signup.html')
+
+# Inlogpagina
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        login_username = request.form['username']
-        login_password = request.form['password']
+        # Verkrijg gebruikersgegevens van het formulier
+        username = request.form['username']
+        password = request.form['password']
 
-        # Laad gebruikersgegevens uit JSON-bestand
-        try:
-            with open('users.json', 'r') as file:
-                users = json.load(file)
-        except FileNotFoundError:
-            users = []
-
-        # Controleer of de gebruikersnaam en het gehashte wachtwoord overeenkomen
+        # Controleer of gebruiker bestaat in de gebruikerslijst
+        users = read_users()
         for user in users:
-            if user['username'] == login_username and user['password'] == hash_password(login_password):
-                # Voeg gebruiker toe aan de lijst met online gebruikers
-                online_users.append(login_username)
-                # Sla de gebruikersnaam op in de sessie
-                session['username'] = login_username
-                return redirect(url_for('chat'))
-
-        return 'Invalid login credentials.'
+            if user['username'] == username and user['password'] == password:
+                session['username'] = username
+                return redirect(url_for('index'))
 
     return render_template('login.html')
 
-@app.route('/logout', methods=['POST'])
+# Uitlogpagina
+@app.route('/logout')
 def logout():
-    # Controleer of de gebruiker is ingelogd
-    if 'username' in session:
-        username = session['username']
-        # Verwijder de gebruiker uit de lijst met online gebruikers
-        online_users.remove(username)
-        # Wis de sessie
-        session.clear()
-    return redirect(url_for('home'))
-
-@app.route('/chat')
-def chat():
-    # Controleer of de gebruiker is ingelogd
-    if 'username' in session:
-        username = session['username']
-        return render_template('chat.html', username=username, users=online_users)
-    else:
-        return redirect(url_for('login'))
+    session.pop('username', None)
+    return redirect(url_for('index'))
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8000)
+    app.run(debug=True)
