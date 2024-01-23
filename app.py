@@ -83,7 +83,7 @@ def chat():
     # Controleer of de gebruiker is ingelogd
     if 'username' in session:
         username = session['username']
-        return '<h1>Welcome to the chat, {}!</h1>'.format(username)
+        return render_template('chat.html', username=username)
     else:
         return redirect(url_for('login'))
 
