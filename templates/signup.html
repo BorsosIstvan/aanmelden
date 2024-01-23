@@ -5,10 +5,21 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Aanmelden</title>
+
+    <script src="path/to/crypto-js.js"></script>
+
+<script>
+    function hashPassword() {
+        var password = document.getElementById('password').value;
+        var hashedPassword = CryptoJS.SHA256(password).toString(CryptoJS.enc.Hex);
+        document.getElementById('password').value = hashedPassword;
+    }
+</script>
+
 </head>
 <body>
     <h1>Aanmelden</h1>
-    <form action="/signup" method="post">
+    <form action="/signup" method="post" onsubmit="hashPassword()">
         <label for="name">Naam:</label>
         <input type="text" id="name" name="name" required><br>
         <label for="surname">Achternaam:</label>
