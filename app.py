@@ -81,6 +81,12 @@ def logout():
     session.pop('username', None)
     return redirect(url_for('index'))
 
+# Gebruikerspagina
+@app.route('/users')
+def users():
+    users_list = read_users()
+    return render_template('users.html', users=users_list)
+
 #if __name__ == '__main__':
 #    app.run(debug=True)
 if __name__ == '__main__':
