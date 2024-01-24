@@ -108,6 +108,14 @@ def users():
 # Chatpagina
 @app.route('/chat/<recipient>', methods=['GET', 'POST'])
 def chat(recipient):
+    # ... (voorgaande code blijft hetzelfde)
+
+    messages = get_messages_for_user(session['username'], recipient)
+    return render_template('chat.html', recipient=recipient, messages=messages)
+
+# Chatpagina
+@app.route('/chat/<recipient>', methods=['GET', 'POST'])
+def chat(recipient):
     if request.method == 'POST':
         sender = session['username']
         text = request.form['message']

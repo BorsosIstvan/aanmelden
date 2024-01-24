@@ -12,7 +12,10 @@
     <h1>Gebruikerslijst</h1>
     <ul>
         {% for user in users %}
-            <li>{{ user['name'] }} {{ user['surname'] }} - {{ user['username'] }}</li>
+            <li>
+                {{ user['name'] }} {{ user['surname'] }} - {{ user['username'] }}
+                <a href="{{ url_for('chat', recipient=user['username']) }}">Chat</a>
+            </li>
         {% endfor %}
     </ul>
 </body>
