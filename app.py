@@ -20,6 +20,24 @@ def write_users(users):
     with open('users.json', 'w') as file:
         json.dump(users, file, indent=2)
 
+# Functies voor het lezen en schrijven van berichten
+def read_messages():
+    try:
+        with open('messages.json', 'r') as file:
+            messages = json.load(file)
+    except FileNotFoundError:
+        messages = []
+    return messages
+
+def write_messages(messages):
+    with open('messages.json', 'w') as file:
+        json.dump(messages, file)
+
+def get_messages_for_user(sender, recipient):
+    messages = read_messages()
+    return [message for message in messages if message['sender'] == sender and message['recipient'] == recipient]
+
+
 # Indexpagina
 @app.route('/')
 def index():
@@ -86,6 +104,28 @@ def logout():
 def users():
     users_list = read_users()
     return render_template('users.html', users=users_list)
+
+# Chatpagina
+@app.route('/chat/<recipient>', methods=['GET', 'POST'])
+def chat(recipient):
+    if request.method == 'POST':
+        sender = session['username']
+        text = request.form['message']
+        status = 'sent'  # Het bericht wordt verzonden
+
+        # Voeg het bericht toe aan messages.json
+        messages = read_messages()
+        messages.append({
+            'sender': sender,
+            'recipient': recipient,
+            'text': text,
+            'status': status
+        })
+        write_messages(messages)
+
+    messages = get_messages_for_user(session['username'], recipient)
+    return render_template('chat.html', recipient=recipient, messages=messages)
+
 
 #if __name__ == '__main__':
 #    app.run(debug=True)

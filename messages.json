@@ -1,0 +1,35 @@
+<!-- templates/chat.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat</title>
+</head>
+<body>
+    <h1>Chat met {{ recipient }}</h1>
+
+    <div id="messages-container">
+        {% for message in messages %}
+            <div class="message {% if message['status'] == 'sent' %}sent{% elif message['status'] == 'delivered' %}delivered{% elif message['status'] == 'read' %}read{% endif %}">
+                <span class="message-sender">{{ message['sender'] }}:</span>
+                <span class="message-text">{{ message['text'] }}</span>
+            </div>
+        {% endfor %}
+    </div>
+
+    <form id="message-form">
+        <input type="text" id="message-input" placeholder="Type hier je bericht">
+        <button type="button" onclick="sendMessage()">Verstuur</button>
+    </form>
+
+    <script>
+        function sendMessage() {
+            var messageInput = document.getElementById('message-input').value;
+            // Stuur het bericht naar de server (nog te implementeren)
+        }
+    </script>
+</body>
+</html>
