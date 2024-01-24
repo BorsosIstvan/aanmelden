@@ -113,27 +113,6 @@ def chat(recipient):
     messages = get_messages_for_user(session['username'], recipient)
     return render_template('chat.html', recipient=recipient, messages=messages)
 
-# Chatpagina
-@app.route('/chat/<recipient>', methods=['GET', 'POST'])
-def chat(recipient):
-    if request.method == 'POST':
-        sender = session['username']
-        text = request.form['message']
-        status = 'sent'  # Het bericht wordt verzonden
-
-        # Voeg het bericht toe aan messages.json
-        messages = read_messages()
-        messages.append({
-            'sender': sender,
-            'recipient': recipient,
-            'text': text,
-            'status': status
-        })
-        write_messages(messages)
-
-    messages = get_messages_for_user(session['username'], recipient)
-    return render_template('chat.html', recipient=recipient, messages=messages)
-
 
 #if __name__ == '__main__':
 #    app.run(debug=True)
