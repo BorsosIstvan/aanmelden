@@ -9,7 +9,24 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
     <title>Chat</title>
 </head>
-<script>
+<body>
+    <h1>Chat met {{ recipient }}</h1>
+
+    <div id="messages-container">
+        {% for message in messages %}
+            <div class="message {% if message['status'] == 'sent' %}sent{% elif message['status'] == 'delivered' %}delivered{% elif message['status'] == 'read' %}read{% endif %}">
+                <span class="message-sender">{{ message['sender'] }}:</span>
+                <span class="message-text">{{ message['text'] }}</span>
+            </div>
+        {% endfor %}
+    </div>
+
+    <form id="message-form">
+        <input type="text" id="message-input" placeholder="Type hier je bericht">
+        <button type="button" onclick="sendMessage()">Verstuur</button>
+    </form>
+
+    <script>
     function sendMessage() {
         var messageInput = document.getElementById('message-input').value;
         var recipient = "{{ recipient }}";  // Ontvanger gebruikersnaam
@@ -42,29 +59,6 @@
         };
         xhr.send();
     }
-</script>
-<body>
-    <h1>Chat met {{ recipient }}</h1>
-
-    <div id="messages-container">
-        {% for message in messages %}
-            <div class="message {% if message['status'] == 'sent' %}sent{% elif message['status'] == 'delivered' %}delivered{% elif message['status'] == 'read' %}read{% endif %}">
-                <span class="message-sender">{{ message['sender'] }}:</span>
-                <span class="message-text">{{ message['text'] }}</span>
-            </div>
-        {% endfor %}
-    </div>
-
-    <form id="message-form">
-        <input type="text" id="message-input" placeholder="Type hier je bericht">
-        <button type="button" onclick="sendMessage()">Verstuur</button>
-    </form>
-
-    <script>
-        function sendMessage() {
-            var messageInput = document.getElementById('message-input').value;
-            // Stuur het bericht naar de server (nog te implementeren)
-        }
     </script>
 </body>
 </html>
