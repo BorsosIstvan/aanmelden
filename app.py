@@ -35,7 +35,8 @@ def write_messages(messages):
 
 def get_messages_for_user(sender, recipient):
     messages = read_messages()
-    return [message for message in messages if message['sender'] == sender and message['recipient'] == recipient]
+#    return [message for message in messages if message['sender'] == sender and message['recipient'] == recipient]
+    return [message for message in messages if (message['sender'] == sender and message['recipient'] == recipient) or (message['recipient'] == sender and message['sender'] == recipient)]
 
 
 # Indexpagina
