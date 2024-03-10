@@ -30,18 +30,15 @@
     <script>
     var socket = io.connect('http://' + document.domain + ':' + location.port);
 
-    console.log('http://' + document.domain + ':' + location.port);
-
     // Event om een nieuw bericht te ontvangen
     socket.on('message_received', function(data) {
+        console.log('Message received event on client');
         loadMessages();  // Laad de berichten wanneer een nieuw bericht wordt ontvangen
     });
 
     function sendMessage() {
         var messageInput = document.getElementById('message-input').value;
         var recipient = "{{ recipient }}";
-
-        console.log("verstuur geduwd");
 
         // Verstuur het bericht naar de server met SocketIO
         socket.emit('send_message', { 'message': messageInput, 'recipient': recipient });
