@@ -142,8 +142,8 @@ def chat(recipient):
         })
         write_messages(messages)
 
-        # Stuur een broadcast naar alle clients dat er een nieuw bericht is ontvangen
-        socketio.emit('message_received', {}, broadcast=True)
+        # Stuur een SocketIO-event naar de ontvanger dat er een nieuw bericht is
+        socketio.emit('message_received', {'recipient': recipient}, room=recipient)
 
     messages = get_messages_for_user(session['username'], recipient)
     return render_template('chat.html', recipient=recipient, messages=messages)
