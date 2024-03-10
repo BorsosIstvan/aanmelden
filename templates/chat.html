@@ -30,6 +30,8 @@
     <script>
     var socket = io.connect('http://' + document.domain + ':' + location.port);
 
+    console.log('http://' + document.domain + ':' + location.port);
+
     // Event om een nieuw bericht te ontvangen
     socket.on('message_received', function(data) {
         loadMessages();  // Laad de berichten wanneer een nieuw bericht wordt ontvangen
