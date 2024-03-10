@@ -27,7 +27,7 @@
         <button type="button" onclick="sendMessage()">Verstuur</button>
     </form>
 
-    <script>
+<script>
     var socket = io.connect('http://' + document.domain + ':' + location.port);
 
     // Event om een nieuw bericht te ontvangen
@@ -42,7 +42,6 @@
 
         // Verstuur het bericht naar de server met SocketIO
         socket.emit('send_message', { 'message': messageInput, 'recipient': recipient });
-        loadMessages();  // Laad de berichten na het verzenden van het bericht
     }
 
     // Functie om berichten te laden zonder de pagina te vernieuwen
@@ -56,11 +55,15 @@
             if (xhr.readyState === 4 && xhr.status === 200) {
                 // Vervang de huidige berichtencontainer met de nieuwe
                 document.getElementById('messages-container').innerHTML = xhr.responseText;
+
+                // Vernieuw de pagina na het laden van de berichten
+                location.reload();
             }
         };
         xhr.send();
     }
-    </script>
+</script>
+
 </body>
 </html>
 
