@@ -1,10 +1,11 @@
 import hashlib
-
 from flask import Flask, render_template, request, redirect, url_for, session
+from flask_socketio import SocketIO, emit
 import json
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'  # Verander dit naar een geheime sleutel
+socketio = SocketIO(app)
 
 # Functie om gebruikers uit het JSON-bestand te lezen
 def read_users():
@@ -35,15 +36,12 @@ def write_messages(messages):
 
 def get_messages_for_user(sender, recipient):
     messages = read_messages()
-#   return [message for message in messages if message['sender'] == sender and message['recipient'] == recipient]
     return [message for message in messages if (message['sender'] == sender and message['recipient'] == recipient) or (message['recipient'] == sender and message['sender'] == recipient)]
-
 
 # Indexpagina
 @app.route('/')
 def index():
     username = session.get('username')
-
     return render_template('index.html', username=username)
 
 # Aanmeldpagina
@@ -59,7 +57,6 @@ def signup():
         # Hash het wachtwoord voordat het wordt opgeslagen
         hashed_password = hashlib.sha256(password.encode('utf-8')).hexdigest()
 
-
         # Voeg nieuwe gebruiker toe aan gebruikerslijst
         users = read_users()
         users.append({
@@ -67,7 +64,7 @@ def signup():
             'surname': surname,
             'email': email,
             'username': username,
-            'password': hashed_password  # Let op: wachtwoorden moeten worden gehasht voordat ze worden opgeslagen in een echt project
+            'password': hashed_password
         })
         write_users(users)
 
@@ -124,11 +121,11 @@ def chat(recipient):
         })
         write_messages(messages)
 
+        # Stuur een broadcast naar alle clients dat er een nieuw bericht is ontvangen
+        socketio.emit('message_received', {}, broadcast=True)
+
     messages = get_messages_for_user(session['username'], recipient)
     return render_template('chat.html', recipient=recipient, messages=messages)
 
-
-#if __name__ == '__main__':
-#    app.run(debug=True)
 if __name__ == '__main__':
-    app.run( host='0.0.0.0', port=8000)
+    socketio.run(app, host='0.0.0.0', port=8000)
