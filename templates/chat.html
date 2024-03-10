@@ -6,9 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
     <title>Chat</title>
-
-    <!-- Voeg deze scripts toe voor SocketIO -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.0/socket.io.js"></script>
 </head>
 <body>
     <h1>Chat met {{ recipient }}</h1>
@@ -27,45 +24,29 @@
         <button type="button" onclick="sendMessage()">Verstuur</button>
     </form>
 
-<!-- Dezelfde inhoud als eerder, maar we voegen een nieuw script toe -->
-<script>
-    var socket = io.connect('http://' + document.domain + ':' + location.port);
-
-    // Event om een nieuw bericht te ontvangen
-    socket.on('message_received', function(data) {
-        console.log('Message received event on client');
-        displayMessage(data.sender, data.text);  // Toon het bericht zonder de pagina opnieuw te laden
-    });
-
+    <script>
     function sendMessage() {
         var messageInput = document.getElementById('message-input').value;
         var recipient = "{{ recipient }}";
 
-        // Verstuur het bericht naar de server met SocketIO
-        socket.emit('send_message', { 'message': messageInput, 'recipient': recipient });
+        // Voer een AJAX-verzoek uit om het bericht naar de server te verzenden
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "/chat/" + recipient, true);
+        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                // Vernieuw de pagina na succesvol verzenden
+                setTimeout(function() {
+                    location.reload();
+                }, 1000);  // Hier wordt de pagina na 1 seconde vernieuwd (1000 milliseconden)
+            }
+        };
+        xhr.send("message=" + encodeURIComponent(messageInput));
     }
-
-    // Functie om berichten te tonen zonder de pagina te vernieuwen
-    function displayMessage(sender, text) {
-        var messagesContainer = document.getElementById('messages-container');
-
-        // Maak een nieuw berichtelement aan
-        var messageDiv = document.createElement('div');
-        messageDiv.className = 'message';
-        messageDiv.innerHTML = '<span class="message-sender">' + sender + ':</span>' +
-                               '<span class="message-text">' + text + '</span>';
-
-        // Voeg het nieuwe bericht toe aan de container
-        messagesContainer.appendChild(messageDiv);
-
-        // Scroll naar beneden om het nieuwe bericht te tonen
-        messagesContainer.scrollTop = messagesContainer.scrollHeight;
-    }
-</script>
-
-
+    </script>
 </body>
 </html>
+
 
 
 

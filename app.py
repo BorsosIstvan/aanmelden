@@ -1,11 +1,9 @@
 import hashlib
-from flask import Flask, render_template, request, redirect, url_for, session
-from flask_socketio import SocketIO, emit
+from flask import Flask, render_template, request, redirect, url_for, session, jsonify
 import json
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'  # Verander dit naar een geheime sleutel
-socketio = SocketIO(app)
 
 # Functie om gebruikers uit het JSON-bestand te lezen
 def read_users():
@@ -37,27 +35,6 @@ def write_messages(messages):
 def get_messages_for_user(sender, recipient):
     messages = read_messages()
     return [message for message in messages if (message['sender'] == sender and message['recipient'] == recipient) or (message['recipient'] == sender and message['sender'] == recipient)]
-
-# SocketIO-event om een nieuw bericht te ontvangen
-@socketio.on('send_message')
-def handle_message(data):
-    print('Received message from client:', data['message'])
-    print('Recipient:', data['recipient'])
-
-    # Voeg het bericht toe aan messages.json
-    sender = session['username']
-    status = 'sent'  # Het bericht wordt verzonden
-    messages = read_messages()
-    messages.append({
-        'sender': sender,
-        'recipient': data['recipient'],
-        'text': data['message'],
-        'status': status
-    })
-    write_messages(messages)
-
-    # Stuur het 'message_received' event naar alle clients in de '/<recipient>' room
-    socketio.emit('message_received', room=f'/{data["recipient"]}')
 
 # Indexpagina
 @app.route('/')
@@ -142,11 +119,9 @@ def chat(recipient):
         })
         write_messages(messages)
 
-        # Stuur een SocketIO-event naar de ontvanger dat er een nieuw bericht is
-        socketio.emit('message_received', {'recipient': recipient}, room=recipient)
-
     messages = get_messages_for_user(session['username'], recipient)
     return render_template('chat.html', recipient=recipient, messages=messages)
 
 if __name__ == '__main__':
-    socketio.run(app, host='0.0.0.0', port=8000)
+    app.run(host='0.0.0.0', port=8000)
+
