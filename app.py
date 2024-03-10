@@ -38,6 +38,27 @@ def get_messages_for_user(sender, recipient):
     messages = read_messages()
     return [message for message in messages if (message['sender'] == sender and message['recipient'] == recipient) or (message['recipient'] == sender and message['sender'] == recipient)]
 
+# SocketIO-event om een nieuw bericht te ontvangen
+@socketio.on('send_message')
+def handle_message(data):
+    print('Received message from client:', data['message'])
+    print('Recipient:', data['recipient'])
+
+    # Voeg het bericht toe aan messages.json
+    sender = session['username']
+    status = 'sent'  # Het bericht wordt verzonden
+    messages = read_messages()
+    messages.append({
+        'sender': sender,
+        'recipient': data['recipient'],
+        'text': data['message'],
+        'status': status
+    })
+    write_messages(messages)
+
+    # Stuur een broadcast naar alle clients dat er een nieuw bericht is ontvangen
+    socketio.emit('message_received', {}, broadcast=True)
+
 # Indexpagina
 @app.route('/')
 def index():
@@ -123,7 +144,6 @@ def chat(recipient):
 
         # Stuur een broadcast naar alle clients dat er een nieuw bericht is ontvangen
         socketio.emit('message_received', {}, broadcast=True)
-        print('Message received from client:', text)
 
     messages = get_messages_for_user(session['username'], recipient)
     return render_template('chat.html', recipient=recipient, messages=messages)
