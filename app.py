@@ -56,8 +56,8 @@ def handle_message(data):
     })
     write_messages(messages)
 
-    # Stuur een broadcast naar alle clients dat er een nieuw bericht is ontvangen
-    socketio.emit('message_received', {}, broadcast=True)
+    # Stuur het 'message_received' event naar alle clients in de '/<recipient>' room
+    socketio.emit('message_received', room=f'/{data["recipient"]}')
 
 # Indexpagina
 @app.route('/')
