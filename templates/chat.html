@@ -9,39 +9,6 @@
 
     <!-- Voeg deze scripts toe voor SocketIO -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.0/socket.io.js"></script>
-    <script>
-    var socket = io.connect('http://' + document.domain + ':' + location.port + '/chat');
-
-    // Event om een nieuw bericht te ontvangen
-    socket.on('message_received', function(data) {
-        console.log('Message received event on client');
-        loadMessages();  // Laad de berichten wanneer een nieuw bericht wordt ontvangen
-    });
-
-    function sendMessage() {
-        var messageInput = document.getElementById('message-input').value;
-        var recipient = "{{ recipient }}";
-
-        // Verstuur het bericht naar de server met SocketIO
-        socket.emit('send_message', { 'message': messageInput, 'recipient': recipient });
-    }
-
-    // Functie om berichten te laden zonder de pagina te vernieuwen
-    function loadMessages() {
-        var recipient = "{{ recipient }}";
-
-        // Voer een AJAX-verzoek uit om de berichten op te halen
-        var xhr = new XMLHttpRequest();
-        xhr.open("GET", "/chat/" + recipient, true);
-        xhr.onreadystatechange = function () {
-            if (xhr.readyState === 4 && xhr.status === 200) {
-                // Vervang de huidige berichtencontainer met de nieuwe
-                document.getElementById('messages-container').innerHTML = xhr.responseText;
-            }
-        };
-        xhr.send();
-    }
-    </script>
 </head>
 <body>
     <h1>Chat met {{ recipient }}</h1>
@@ -59,7 +26,44 @@
         <input type="text" id="message-input" placeholder="Type hier je bericht">
         <button type="button" onclick="sendMessage()">Verstuur</button>
     </form>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var socket = io.connect('http://' + document.domain + ':' + location.port + '/chat');
+
+        // Event om een nieuw bericht te ontvangen
+        socket.on('message_received', function(data) {
+            console.log('Message received event on client');
+            loadMessages();  // Laad de berichten wanneer een nieuw bericht wordt ontvangen
+        });
+
+        function sendMessage() {
+            var messageInput = document.getElementById('message-input').value;
+            var recipient = "{{ recipient }}";
+
+            // Verstuur het bericht naar de server met SocketIO
+            socket.emit('send_message', { 'message': messageInput, 'recipient': recipient });
+        }
+
+        // Functie om berichten te laden zonder de pagina te vernieuwen
+        function loadMessages() {
+            var recipient = "{{ recipient }}";
+
+            // Voer een AJAX-verzoek uit om de berichten op te halen
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", "/chat/" + recipient, true);
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    // Vervang de huidige berichtencontainer met de nieuwe
+                    document.getElementById('messages-container').innerHTML = xhr.responseText;
+                }
+            };
+            xhr.send();
+        }
+    });
+    </script>
 </body>
 </html>
+
 
 
