@@ -10,7 +10,7 @@
     <!-- Voeg deze scripts toe voor SocketIO -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.0/socket.io.js"></script>
     <script>
-    var socket = io.connect('http://' + document.domain + ':' + location.port);
+    var socket = io.connect('http://' + document.domain + ':' + location.port + '/chat');
 
     // Event om een nieuw bericht te ontvangen
     socket.on('message_received', function(data) {
@@ -24,7 +24,6 @@
 
         // Verstuur het bericht naar de server met SocketIO
         socket.emit('send_message', { 'message': messageInput, 'recipient': recipient });
-        console.log('Message sent to server:', messageInput);
     }
 
     // Functie om berichten te laden zonder de pagina te vernieuwen
@@ -42,7 +41,7 @@
         };
         xhr.send();
     }
-</script>
+    </script>
 </head>
 <body>
     <h1>Chat met {{ recipient }}</h1>
