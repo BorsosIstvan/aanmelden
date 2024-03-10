@@ -9,6 +9,7 @@
 
     <!-- Voeg deze scripts toe voor SocketIO -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.0/socket.io.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 </head>
 <body>
     <h1>Chat met {{ recipient }}</h1>
@@ -24,7 +25,7 @@
 
     <form id="message-form">
         <input type="text" id="message-input" placeholder="Type hier je bericht">
-        <button type="button" onclick="sendMessage()">Verstuur</button>
+        <button type="button" id="send-button">Verstuur</button>
     </form>
 
     <script>
@@ -37,8 +38,13 @@
             loadMessages();  // Laad de berichten wanneer een nieuw bericht wordt ontvangen
         });
 
+        // Klikgebeurtenis voor de verzendknop
+        $('#send-button').on('click', function() {
+            sendMessage();
+        });
+
         function sendMessage() {
-            var messageInput = document.getElementById('message-input').value;
+            var messageInput = $('#message-input').val();
             var recipient = "{{ recipient }}";
 
             // Verstuur het bericht naar de server met SocketIO
