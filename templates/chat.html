@@ -56,15 +56,17 @@
             var recipient = "{{ recipient }}";
 
             // Voer een AJAX-verzoek uit om de berichten op te halen
-            var xhr = new XMLHttpRequest();
-            xhr.open("GET", "/chat/" + recipient, true);
-            xhr.onreadystatechange = function () {
-                if (xhr.readyState === 4 && xhr.status === 200) {
+            $.ajax({
+                url: "/chat/" + recipient,
+                type: "GET",
+                success: function(response) {
                     // Vervang de huidige berichtencontainer met de nieuwe
-                    document.getElementById('messages-container').innerHTML = xhr.responseText;
+                    $('#messages-container').html(response);
+                },
+                error: function(error) {
+                    console.log(error);
                 }
-            };
-            xhr.send();
+            });
         }
     });
     </script>
