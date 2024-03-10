@@ -39,6 +39,8 @@
         var messageInput = document.getElementById('message-input').value;
         var recipient = "{{ recipient }}";
 
+        console.log("verstuur geduwd");
+
         // Verstuur het bericht naar de server met SocketIO
         socket.emit('send_message', { 'message': messageInput, 'recipient': recipient });
     }
