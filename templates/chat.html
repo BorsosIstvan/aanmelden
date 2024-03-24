@@ -8,7 +8,7 @@
     <title>Chat</title>
 </head>
 <body>
-    <h1>Hoi {{ sender }} Chat met {{ recipient }}</h1>
+    <h1>Hoi {{ username }} Chat met {{ recipient }}</h1>
 
     <div id="messages-container">
         {% for message in messages %}
@@ -28,7 +28,6 @@
     function sendMessage() {
         var messageInput = document.getElementById('message-input').value;
         var recipient = "{{ recipient }}";
-        ver sender = "{{ sender }}"
 
         // Voer een AJAX-verzoek uit om het bericht naar de server te verzenden
         var xhr = new XMLHttpRequest();
