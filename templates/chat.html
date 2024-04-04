@@ -10,7 +10,7 @@
 <body>
     <h1>Hoi {{ session['username'] }} ! Je chat nu met {{ recipient }}</h1>
 
-    <div id="messages-container" style="overflow-y: auto; max-height: 80vh;">
+    <div id="messages-container">
         {% for message in messages %}
             <div class="message {% if message['status'] == 'sent' %}sent{% elif message['status'] == 'delivered' %}delivered{% elif message['status'] == 'read' %}read{% endif %}">
                 <span class="message-sender">{{ message['sender'] }}:</span>
@@ -25,6 +25,12 @@
     </form>
 
     <script>
+        // Scroll naar de onderkant van de berichtenlijst wanneer de pagina laadt
+window.onload = function() {
+    var messagesContainer = document.getElementById('messages-container');
+    messagesContainer.scrollTop = messagesContainer.scrollHeight - messagesContainer.clientHeight;
+};
+
     function sendMessage() {
         var messageInput = document.getElementById('message-input').value;
         var recipient = "{{ recipient }}";
