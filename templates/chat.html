@@ -12,6 +12,7 @@
     var socket = io.connect('http://' + document.domain + ':' + location.port);
 
     // Luister naar meldingen over nieuwe berichten
+    console.log('shocket draaien');
     socket.on('new_message_notification', function(data) {
         console.log('Notification received:', data);
         // Vernieuw de pagina
