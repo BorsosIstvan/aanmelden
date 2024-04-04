@@ -13,6 +13,7 @@
 
     // Luister naar meldingen over nieuwe berichten
     socket.on('new_message_notification', function(data) {
+        console.log('Notification received:', data);
         // Vernieuw de pagina
         location.reload();
     });
