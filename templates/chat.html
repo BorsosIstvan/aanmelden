@@ -8,7 +8,15 @@
     <title>Chat</title>
         <!-- Voeg deze scripts toe voor SocketIO -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.0/socket.io.js"></script>
-
+    <script>
+    var socket = io.connect('http://' + document.domain + ':' + location.port);
+    console.log('http://' + document.domain + ':' + location.port);
+    // Luister naar meldingen over nieuwe berichten
+    socket.on('new_message_notification', function(data) {
+        // Vernieuw de pagina
+        location.reload();
+    });
+    </script>
     </head>
 <body>
     <h1>Hoi {{ session['username'] }} ! Je chat nu met {{ recipient }}</h1>
@@ -53,18 +61,7 @@ window.onload = function() {
         xhr.send("message=" + encodeURIComponent(messageInput));
     }
     </script>
-    <script>
-    var socket = io.connect('http://' + document.domain + ':' + location.port);
 
-    // Luister naar meldingen over nieuwe berichten
-    console.log('shocket draaien');
-    socket.on('new_message_notification', function(data) {
-        console.log('New message notification received:', data);
-        console.log('Notification received:', data);
-        // Vernieuw de pagina
-        location.reload();
-    });
-    </script>
 </body>
 </html>
 
