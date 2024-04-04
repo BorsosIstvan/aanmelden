@@ -1,11 +1,9 @@
 import hashlib
 from flask import Flask, render_template, request, redirect, url_for, session, jsonify
-from flask_socketio import SocketIO, emit
 import json
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'  # Verander dit naar een geheime sleutel
-socketio = SocketIO(app)
 
 # Functie om gebruikers uit het JSON-bestand te lezen
 def read_users():
@@ -121,12 +119,10 @@ def chat(recipient):
         })
         write_messages(messages)
 
-    # Stuur een melding naar alle clients over een nieuw bericht
-    socketio.emit('new_message_notification', {}, namespace='/chat')
 
     messages = get_messages_for_user(session['username'], recipient)
     return render_template('chat.html', recipient=recipient, messages=messages)
 
 if __name__ == '__main__':
-    socketio.run(app, host='0.0.0.0', port=8000)
+    app.run( host='0.0.0.0', port=8000)
 
