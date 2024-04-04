@@ -14,6 +14,7 @@
     // Luister naar meldingen over nieuwe berichten
     console.log('shocket draaien');
     socket.on('new_message_notification', function(data) {
+        console.log('New message notification received:', data);
         console.log('Notification received:', data);
         // Vernieuw de pagina
         location.reload();
