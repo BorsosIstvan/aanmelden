@@ -1,6 +1,6 @@
 import hashlib
 from flask import Flask, render_template, request, redirect, url_for, session, jsonify
-from flask_socketio import SocketIO, emit
+from flask_socketio import SocketIO, emit, send
 import json
 
 app = Flask(__name__)
@@ -120,6 +120,9 @@ def chat(recipient):
             'status': status
         })
         write_messages(messages)
+
+    # Stuur een melding naar alle clients over een nieuw bericht
+    socketio.emit('new_message_notification', {}, namespace='/chat')
 
     messages = get_messages_for_user(session['username'], recipient)
     return render_template('chat.html', recipient=recipient, messages=messages)
