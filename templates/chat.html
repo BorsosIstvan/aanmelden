@@ -6,6 +6,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
     <title>Chat</title>
+        <!-- Voeg deze scripts toe voor SocketIO -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.0/socket.io.js"></script>
+    <script>
+    var socket = io.connect('http://' + document.domain + ':' + location.port);
+
+    // Luister naar meldingen over nieuwe berichten
+    socket.on('new_message_notification', function(data) {
+        // Vernieuw de pagina
+        location.reload();
+    });
+    </script>
     </head>
 <body>
     <h1>Hoi {{ session['username'] }} ! Je chat nu met {{ recipient }}</h1>
